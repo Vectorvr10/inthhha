@@ -4,7 +4,7 @@
    2. Reset y Estilos Base
    3. Layout General (Grid Principal)
    4. Header y Navegación Superior
-   5. Mega Menú (Barra de Herramientas) -> [CORREGIDO: ALINEACIÓN VERTICAL REAL]
+   5. Mega Menú (Barra de Herramientas)
    6. Sidebar (Menú Lateral HHHA)
    7. Componentes: Tarjetas y Grid de Recursos
    8. Componentes: Panel de Enlaces
@@ -801,3 +801,110 @@ a { text-decoration: none; color: inherit; }
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* -- Módulos para Anexos -- */
+
+const initAnexosDirectory = () => {
+    const anexosGrid = document.getElementById('anexos-grid');
+    if (!anexosGrid) return; // Solo ejecutar si existe el contenedor
+
+    const tabs = document.querySelectorAll('.filter-tab');
+    const searchInput = document.getElementById('anexos-search');
+    const searchBtn = document.querySelector('.search-btn');
+    const mobileSelect = document.getElementById('mobile-filters-select');
+
+    let currentFilter = 'todos';
+
+    const renderAnexos = () => {
+        if (typeof anexosDB === 'undefined') {
+            anexosGrid.innerHTML = 'Error: anexosDB no cargada.';
+            return;
+        }
+
+        const searchText = searchInput.value.toLowerCase();
+        
+        const filtered = anexosDB.filter(anexo => {
+            const matchFilter = currentFilter === 'todos' || 
+                (Array.isArray(anexo.category) ? anexo.category.includes(currentFilter) : anexo.category === currentFilter);
+            
+            const matchSearch = !searchText || 
+                anexo.title.toLowerCase().includes(searchText) || 
+                anexo.number.includes(searchText);
+
+            return matchFilter && matchSearch;
+        });
+
+        anexosGrid.innerHTML = '';
+
+        if (filtered.length === 0) {
+            anexosGrid.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">No se encontraron anexos.</div>`;
+            return;
+        }
+
+        filtered.forEach(anexo => {
+            const card = document.createElement('div');
+            card.className = 'anexo-card';
+            card.innerHTML = `
+                <div class="anexo-icon">${getEmojiForCategory(anexo.category)}</div>
+                <span class="anexo-minititle">${anexo.title}</span>
+                <p class="anexo-number">${anexo.number}</p>
+            `;
+            anexosGrid.appendChild(card);
+        });
+    };
+
+    // Función para actualizar tabs y select móvil
+    const updateActiveFilter = (filterValue) => {
+        // Actualizar tabs de escritorio
+        tabs.forEach(t => {
+            if (t.dataset.filter === filterValue) {
+                t.classList.add('active');
+            } else {
+                t.classList.remove('active');
+            }
+        });
+
+        // Actualizar select móvil
+        if (mobileSelect) {
+            mobileSelect.value = filterValue;
+        }
+        
+        currentFilter = filterValue;
+        renderAnexos();
+    };
+
+    // Event Listeners para tabs de escritorio
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            updateActiveFilter(tab.dataset.filter);
+        });
+    });
+
+    // Event Listener para select móvil
+    if (mobileSelect) {
+        mobileSelect.addEventListener('change', (e) => {
+            updateActiveFilter(e.target.value);
+        });
+    }
+
+    const performSearch = () => renderAnexos();
+    
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+    if(searchBtn) searchBtn.addEventListener('click', performSearch);
+
+    // **MANTENER COMPATIBILIDAD**: Asignar la función con ambos nombres
+    window.initAnexosSystem = initAnexosDirectory;
+
+    renderAnexos();
+};
+
+/* -- Inicialización Global -- */
+
+const initApp = () => {
+    console.log('Iniciando Aplicación HHHA...');
+    initSidebarMenu();
+    initMegaMenu();
+    initRepository();
+    initAnexosDirectory(); // Usar el nombre principal
+};
