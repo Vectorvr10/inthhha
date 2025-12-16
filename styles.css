@@ -12,7 +12,6 @@
    10. Paginación
    11. Utilidades y Animaciones
    12. Optimización Móvil (Responsive)
-   13. Correcciones Modo Oscuro (Móvil)
    ========================================================================== */
 
 /* =========================================
@@ -707,7 +706,7 @@ a { text-decoration: none; color: inherit; }
     .toolbar-tabs-container {
         display: none; /* Oculto inicialmente */
         width: 100%;
-        background-color: white;
+        background-color: var(--secondary-bg); /*no cambia de color AQUI ESTA EL PROBLEMA*/
         flex-direction: column;
         box-shadow: 0 10px 15px rgba(0,0,0,0.1);
         border-top: 1px solid #ddd;
@@ -724,8 +723,8 @@ a { text-decoration: none; color: inherit; }
         width: 100%;
         text-align: left;
         padding: 15px 20px;
-        border-radius: 0;
-        border-bottom: 1px solid #eee;
+        border-radius: 20px;
+        border-bottom: 0px solid #eee;
         justify-content: flex-start;
         font-size: 15px;
     }
@@ -746,14 +745,14 @@ a { text-decoration: none; color: inherit; }
         padding: 14px;
         font-size: 16px; /* 16px evita zoom automático en iPhone */
         color: var(--ssasur-blue);
-        background-color: white;
+        background-color: var(--secondary-bg);  /*no cambia de color AQUI ESTA EL PROBLEMA*/
         border: 2px solid var(--ssasur-blue);
         border-radius: 12px;
         font-weight: 700;
         outline: none;
         /* Flecha personalizada */
         appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230f69b4%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.orgno cambia%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230f69b4%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
         background-repeat: no-repeat;
         background-position: right 15px center;
         background-size: 12px;
@@ -802,70 +801,4 @@ a { text-decoration: none; color: inherit; }
 @keyframes expandMenu {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================
-   13. CORRECCIONES MODO OSCURO (MÓVIL)
-   ========================================= */
-
-/* Aplicar solo si el cuerpo tiene la clase dark-mode (o el atributo data-theme) */
-body.dark-mode .toolbar-area,
-[data-theme="dark"] .toolbar-area {
-    /* En modo oscuro, la barra pasa a ser gris oscuro en vez de azul brillante, 
-       para descansar la vista, pero mantiene la línea roja de identidad */
-    background-color: #1a1a1a !important; 
-    border-bottom: 3px solid var(--ssasur-red);
-}
-
-body.dark-mode .mobile-menu-toggle,
-[data-theme="dark"] .mobile-menu-toggle {
-    color: #ffffff; /* Texto blanco */
-}
-
-/* El contenedor de las opciones desplegables */
-body.dark-mode .toolbar-tabs-container,
-[data-theme="dark"] .toolbar-tabs-container {
-    background-color: #2d2d2d; /* Gris oscuro */
-    border-top: 1px solid #444;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-/* Los botones individuales del menú */
-body.dark-mode .megamenu-tab,
-[data-theme="dark"] .megamenu-tab {
-    background-color: #2d2d2d;
-    color: #e0e0e0; /* Blanco suave */
-    border-bottom: 1px solid #404040;
-}
-
-body.dark-mode .megamenu-tab:active,
-[data-theme="dark"] .megamenu-tab:active {
-    background-color: #3d3d3d; /* Un poco más claro al tocar */
-    color: var(--ssasur-blue); /* Azul al activar */
-}
-
-/* --- SELECT DE SERVICIOS CLÍNICOS EN MODO OSCURO --- */
-body.dark-mode .mobile-repo-select,
-[data-theme="dark"] .mobile-repo-select {
-    background-color: #2d2d2d;
-    color: #ffffff;
-    border: 2px solid #555; /* Borde gris sutil en vez de azul intenso */
-}
-
-/* Cambiamos el icono del select (la flechita) a blanco/gris para que se vea en fondo oscuro */
-body.dark-mode .mobile-repo-select,
-[data-theme="dark"] .mobile-repo-select {
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-}
-
-/* --- TARJETAS Y CONTENEDORES EN MODO OSCURO --- */
-body.dark-mode .repo-item,
-[data-theme="dark"] .repo-item {
-    background-color: #2d2d2d;
-    border-color: #444;
-}
-
-body.dark-mode .repo-title,
-[data-theme="dark"] .repo-title {
-    color: #ffffff;
 }
