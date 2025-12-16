@@ -391,42 +391,12 @@ const initRepository = () => {
         paginationContainer.appendChild(info);
     };
 
+    // --- FUNCIÓN RENDER PRINCIPAL (CORREGIDA) ---
     const renderResources = () => {
         if (typeof resourcesDB === 'undefined') {
             resultsContainer.innerHTML = '<div class="error">Error: resourcesDB no cargada.</div>';
             return;
         }
-
-    // 1. Sincronizar botones de escritorio con Select Móvil
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            // Actualizar variables
-            currentCategory = tab.dataset.cat;
-            
-            // Sincronizar visualmente el Select Móvil si se cambia desde PC (o al redimensionar)
-            if(mobileSelect) mobileSelect.value = currentCategory;
-
-            currentPage = 1;
-            updateTypeFilterOptions();
-            renderResources();
-        });
-    });
-
-    // 2. Nuevo Listener para el Select Móvil
-    if (mobileSelect) {
-        mobileSelect.addEventListener('change', (e) => {
-            const selectedCat = e.target.value;
-            
-            // Buscar el botón correspondiente y simular click
-            const targetTab = document.querySelector(`.repo-tab[data-cat="${selectedCat}"]`);
-            if (targetTab) {
-                targetTab.click();
-            }
-        });
-    }
 
         // 1. Filtrado
         const searchText = searchInput.value.toLowerCase();
@@ -451,7 +421,6 @@ const initRepository = () => {
             });
         } else {
             // POR DEFECTO: Orden Alfabético (A-Z)
-            // Esto se ejecuta si selectedOrder es 'az', '' (vacío) o cualquier otro valor.
             filtered.sort((a, b) => a.title.localeCompare(b.title));
         }
 
@@ -488,18 +457,39 @@ const initRepository = () => {
         renderPagination(filtered.length);
     };
 
-    // Event Listeners
+    // --- EVENT LISTENERS ---
+
+    // 1. Tabs de Categoría (Escritorio)
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
+            
+            // Actualizar variables
             currentCategory = tab.dataset.cat;
+            
+            // Sincronizar visualmente el Select Móvil
+            if(mobileSelect) mobileSelect.value = currentCategory;
+
             currentPage = 1;
             updateTypeFilterOptions();
             renderResources();
         });
     });
 
+    // 2. Select de Categoría (Móvil)
+    if (mobileSelect) {
+        mobileSelect.addEventListener('change', (e) => {
+            const selectedCat = e.target.value;
+            // Buscar el botón correspondiente y simular click
+            const targetTab = document.querySelector(`.repo-tab[data-cat="${selectedCat}"]`);
+            if (targetTab) {
+                targetTab.click();
+            }
+        });
+    }
+
+    // 3. Filtros y Búsqueda
     const triggerUpdate = () => { currentPage = 1; renderResources(); };
 
     searchInput.addEventListener('input', triggerUpdate);
@@ -511,7 +501,6 @@ const initRepository = () => {
     orderFilter.addEventListener('change', triggerUpdate);
 
     // Inicialización
-    // Opcional: Forzar visualmente el select a 'az' si existe esa opción en el HTML
     if(orderFilter.querySelector('option[value="az"]')) {
         orderFilter.value = 'az'; 
     }
